@@ -1,5 +1,5 @@
 from django.contrib import admin
-from .models import SubtitleData
+from .models import SubtitleDataModel
 
 # Register your models here.
-admin.site.register(SubtitleData)
+admin.site.register(SubtitleDataModel)

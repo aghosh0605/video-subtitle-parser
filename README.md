@@ -33,7 +33,15 @@ python3 manage.py runserver
 ### REST API Endpoints
 
 ```
-POST /api/v1/subtitle                Add a subtitle
+POST /api/v1/subtitle               Add a subtitle
 GET /api/v1/subtitle                Shows all subtitle details
 GET /api/v1/subtitle/item_id        Shows subtitle details with ID
+```
+
+## Useful command snippet for Developers
+
+```bash
+sudo apt-get install ccextractor
+ccextractor video_test.mp4 -out=ttxt
+pip3 freeze > requirements.txt
 ```
