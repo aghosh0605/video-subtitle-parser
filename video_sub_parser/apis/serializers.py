@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from .models import SubtitleDataModel
+from .models import SubtitleDataModel,FileModel
 from django.utils import timezone
 import uuid
 
@@ -14,3 +14,8 @@ class SubtitleDataSerializer(serializers.ModelSerializer):
     class Meta:
         model = SubtitleDataModel
         fields = ('__all__')
+        
+class FileSerializer(serializers.ModelSerializer):
+    class Meta():
+        model = FileModel
+        fields = ('file', 'remark', 'timestamp')

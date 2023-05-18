@@ -1,9 +1,6 @@
-from dotenv import dotenv_values, load_dotenv
 import os
 import boto3
 import datetime
-
-load_dotenv()
 
 # value = os.getenv('AWS_ACCESS_KEY_ID')
 # print(value)
@@ -46,3 +43,5 @@ def checkSingleton():
         print("Singleton works, both variables contain the same instance.")
     else:
         print("Singleton failed, variables contain different instances.")
+
+# checkSingleton()

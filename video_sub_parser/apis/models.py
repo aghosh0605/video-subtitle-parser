@@ -10,3 +10,9 @@ class SubtitleDataModel(models.Model):
     end_time = models.CharField(max_length=15,blank=True, null=True)
     subtitle = models.CharField(max_length=100,blank=True, null=True)
     modified_time = models.DateTimeField(default=timezone.now) #timezone Asis/Kolkata
+
+
+class FileModel(models.Model):
+    file = models.FileField(blank=False, null=False)
+    remark = models.CharField(max_length=20)
+    timestamp = models.DateTimeField(auto_now_add=True)

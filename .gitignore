@@ -162,3 +162,4 @@ cython_debug/
 .vscode
 video_test.mp4
 video_test.txt
+video_sub_parser/media
