@@ -50,7 +50,7 @@ class FileView(APIView):
             save_path = os.path.join(settings.BASE_DIR, str(file_serializer.data['file']).strip("/"))
             # print(save_path)
             if os.path.isfile(save_path):
-                upload_file(save_path,'ecowiser-internship')
+                upload_file(save_path)
                 os.remove(save_path)
 
             return Response(file_serializer.data, status=status.HTTP_201_CREATED)

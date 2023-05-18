@@ -26,7 +26,7 @@ class ProgressPercentage(object):
             sys.stdout.flush()
 
 
-def upload_file(file_name, bucket, object_name=None):
+def upload_file(file_name, bucket=None, object_name=None):
     """Upload a file to an S3 bucket
 
     :param file_name: File to upload
@@ -38,6 +38,10 @@ def upload_file(file_name, bucket, object_name=None):
     # If S3 object_name was not specified, use file_name
     if object_name is None:
         object_name = os.path.basename(file_name)
+        # print(object_name)
+        
+    if bucket is None:
+        bucket = 'ecowiser-internship'
         # print(object_name)
 
     # Upload the file
