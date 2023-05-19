@@ -11,6 +11,7 @@ from django.utils.decorators import method_decorator
 from django.views.decorators.csrf import csrf_exempt
 from .s3 import upload_file
 from django.conf import settings
+from .extractor import *
 import os
 
 # Create your views here.
@@ -42,7 +43,7 @@ class VideoParse(APIView):
 class FileView(APIView):
     parser_classes = (MultiPartParser, FormParser)
     
-    def post(self, request, *args, **kwargs):
+    def post(self, request):
         file_serializer = FileSerializer(data=request.data)
         
         if file_serializer.is_valid():
@@ -51,8 +52,19 @@ class FileView(APIView):
             # print(save_path)
             if os.path.isfile(save_path):
                 upload_file(save_path)
-                os.remove(save_path)
-
-            return Response(file_serializer.data, status=status.HTTP_201_CREATED)
+                # os.remove(save_path)
+                filename = os.path.basename(save_path)
+            return Response(data={"filename":filename}, status=status.HTTP_201_CREATED)
         else:
             return Response(file_serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+        
+class FileParseView(APIView):
+    def get(self,request,file=None):
+        filename=self.request.query_params.get('file', None)
+        # print(filename)
+        if filename:
+            save_path = os.path.join(settings.BASE_DIR, f'media/uploads/{filename}')
+            extractSubtitle(save_path)
+            return Response(data={"message":"Parsed Video"}, status=status.HTTP_201_CREATED)
+        else:
+            return Response(data={"message":"No video found"}, status=status.HTTP_201_CREATED)

@@ -37,7 +37,12 @@ def upload_file(file_name, bucket=None, object_name=None):
 
     # If S3 object_name was not specified, use file_name
     if object_name is None:
-        object_name = os.path.basename(file_name)
+        ext = os.path.splitext(file_name)[-1].lower()
+        # print(ext)
+        if ext == '.txt':
+            object_name =  'subtitles/'+ os.path.basename(file_name)
+        else:
+            object_name = 'uploads/' + os.path.basename(file_name)
         # print(object_name)
         
     if bucket is None:
