@@ -22,6 +22,8 @@ For instance, if a 2 minute clip of a music video was uploaded, the application 
 - cd into the Django project root directory `cd video_sub_parser`
 - Run the below commands
 
+`sudo apt-get install ccextractor` - Tested on ubuntu 20.04 LTS
+
 ```python
 python3 manage.py makemigrations
 python3 manage.py migrate
@@ -41,7 +43,6 @@ GET /api/v1/subtitle/item_id        Shows subtitle details with ID
 ## Useful command snippet for Developers
 
 ```bash
-sudo apt-get install ccextractor
 ccextractor video_test.mp4 -out=ttxt
 pip3 freeze > requirements.txt
 ```

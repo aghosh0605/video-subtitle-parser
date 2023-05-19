@@ -24,8 +24,14 @@ class DynamoServices:
         return cls._instance
 
     def createItem(self,data):
+        # For Single item
+        # DynamoServices.__table.put_item(Item= data)
         
-        DynamoServices.__table.put_item(Item= data)
+        #For multiple items use below
+        with DynamoServices.__table.batch_writer() as batch:
+            for item in data:
+                response = batch.put_item(Item=item)
+        print("Uploaded all items to DynamoDB")
 
 
 

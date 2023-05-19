@@ -20,6 +20,8 @@ load_dotenv()
 BASE_DIR = Path(__file__).resolve().parent.parent
 MEDIA_URL = '/media/'
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
+AWS_STORAGE_BUCKET_NAME= str(os.getenv('AWS_STORAGE_BUCKET_NAME'))
+BUCKET_URL = str(os.getenv('BUCKET_URL'))
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/4.2/howto/deployment/checklist/
