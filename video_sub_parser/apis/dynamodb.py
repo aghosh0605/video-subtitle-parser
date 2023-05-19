@@ -1,6 +1,7 @@
 import os
 import boto3
 import datetime
+from boto3.dynamodb.conditions import Key, Attr
 
 # value = os.getenv('AWS_ACCESS_KEY_ID')
 # print(value)
@@ -33,6 +34,12 @@ class DynamoServices:
                 response = batch.put_item(Item=item)
         print("Uploaded all items to DynamoDB")
 
+    def searchItem(self,query,table=None):
+        if table is None:
+            table='ecowiser'
+        response = DynamoServices.__table.scan(FilterExpression=Attr('subtitle').contains(query))
+
+        return response
 
 
 # Check singleton functionality

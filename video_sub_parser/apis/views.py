@@ -18,8 +18,10 @@ import os
 @method_decorator(csrf_exempt, name='dispatch')
 class VideoParse(APIView):
     _dbobj = DynamoServices()
+    
     def post(self, request):
         serializer = SubtitleDataSerializer(data=request.data)
+        
         if serializer.is_valid():
             # serializer.save()
             VideoParse._dbobj.createItem(serializer.data)
@@ -42,6 +44,7 @@ class VideoParse(APIView):
 @method_decorator(csrf_exempt, name='dispatch')
 class FileView(APIView):
     parser_classes = (MultiPartParser, FormParser)
+    _dbobj = DynamoServices()
     
     def post(self, request):
         file_serializer = FileSerializer(data=request.data)
@@ -58,7 +61,15 @@ class FileView(APIView):
         else:
             return Response(file_serializer.errors, status=status.HTTP_400_BAD_REQUEST)
         
+    def get(self,request):
+        search_query=self.request.query_params.get('query', None)
+        if search_query:
+            result = FileView._dbobj.searchItem(search_query)
+            return Response(data=result, status=status.HTTP_201_CREATED)
+        else:
+            return Response(data={"message":"No subtitle found"}, status=status.HTTP_400_BAD_REQUEST)
 class FileParseView(APIView):
+    
     def get(self,request,file=None):
         filename=self.request.query_params.get('file', None)
         # print(filename)
@@ -67,4 +78,4 @@ class FileParseView(APIView):
             extractSubtitle(save_path)
             return Response(data={"message":"Parsed Video"}, status=status.HTTP_201_CREATED)
         else:
-            return Response(data={"message":"No video found"}, status=status.HTTP_201_CREATED)
+            return Response(data={"message":"No video found"}, status=status.HTTP_400_BAD_REQUEST)
