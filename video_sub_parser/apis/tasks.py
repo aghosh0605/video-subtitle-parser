@@ -10,9 +10,9 @@ from celery_progress.backend import ProgressRecorder
 
 _dbobj=DynamoServices()
 
-@shared_task
-def puItems(subtitle_path,media_url):
-    
+@shared_task(bind=True)
+def puItems(self,subtitle_path,media_url):
+
     s3_subtitle_url= os.path.join(settings.BUCKET_URL,f'subtitles/{os.path.basename(subtitle_path)}')
     s3_upload_url =os.path.join(settings.BUCKET_URL,f'uploads/{os.path.basename(media_url)}')
     data_to_upload = []
@@ -32,7 +32,7 @@ def puItems(subtitle_path,media_url):
     print('Insert background task completed')
     
     
-@shared_task
+@shared_task(bind=True)
 def uploads3(file_name,bucket=None,object_name=None):
     # If S3 object_name was not specified, use file_name
     if object_name is None:
@@ -50,14 +50,3 @@ def uploads3(file_name,bucket=None,object_name=None):
     
     # s3 client for uploading files
     upload_file(file_name,bucket,object_name)
-        
-        
-@shared_task(bind=True)
-def wait_sometime(self, seconds):
-    progress_recorder = ProgressRecorder(self)
-    result = 0
-    for i in range(seconds):
-        time.sleep(5)
-        result += i
-        progress_recorder.set_progress(i + 1, seconds,f'Sleep Progress Track')
-    return result

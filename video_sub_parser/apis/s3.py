@@ -5,6 +5,9 @@ from botocore.exceptions import ClientError
 import os
 import sys
 import threading
+from celery_progress.backend import ProgressRecorder
+from celery import shared_task 
+
 
 class ProgressPercentage(object):
 
@@ -25,7 +28,7 @@ class ProgressPercentage(object):
                     percentage))
             sys.stdout.flush()
 
-
+@shared_task(bind=True)
 def upload_file(file_name, bucket, object_name):
     """Upload a file to an S3 bucket
 
