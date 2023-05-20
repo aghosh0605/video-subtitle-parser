@@ -45,4 +45,5 @@ GET /api/v1/subtitle/item_id        Shows subtitle details with ID
 ```bash
 ccextractor video_test.mp4 -out=ttxt
 pip3 freeze > requirements.txt
+celery -A video_sub_parser worker --loglevel=debug --concurrency=4
 ```

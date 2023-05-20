@@ -4,6 +4,7 @@ import os
 import uuid
 from .s3 import upload_file
 from .dynamodb import DynamoServices
+from .tasks import *
 import json
 
 _dbobj = DynamoServices()
@@ -37,7 +38,8 @@ def extractSubtitle(video_path):
     # print(returned_output.decode("utf-8"))
     
     if os.path.isfile(subtitle_path):
-        upload_file(subtitle_path)
-        uploadSubtitle(subtitle_path,video_path)
+        sleep_sometime.delay()
+        # upload_file(subtitle_path)
+        # uploadSubtitle(subtitle_path,video_path)
         # os.remove(video_path)
         os.remove(subtitle_path)

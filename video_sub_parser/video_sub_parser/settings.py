@@ -22,6 +22,12 @@ MEDIA_URL = '/media/'
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 AWS_STORAGE_BUCKET_NAME= str(os.getenv('AWS_STORAGE_BUCKET_NAME'))
 BUCKET_URL = str(os.getenv('BUCKET_URL'))
+# REDIS related settings 
+REDIS_HOST = 'localhost' 
+REDIS_PORT = '6379' 
+CELERY_BROKER_URL = 'redis://' + REDIS_HOST + ':' + REDIS_PORT + '/0' 
+CELERY_RESULT_BACKEND = 'redis://' + REDIS_HOST + ':' + REDIS_PORT + '/0'
+CELERY_TIMEZONE = 'UTC'
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/4.2/howto/deployment/checklist/
@@ -45,6 +51,7 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'rest_framework',
+    'celery',
     'apis'
 ]
 
