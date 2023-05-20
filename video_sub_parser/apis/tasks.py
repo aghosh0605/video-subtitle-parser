@@ -1,10 +1,12 @@
-from celery import shared_task
-import time
+from celery import shared_task 
 import os
 from .dynamodb import DynamoServices
+from .s3 import upload_file
 from django.conf import settings
 import uuid
 import json
+import time
+from celery_progress.backend import ProgressRecorder
 
 _dbobj=DynamoServices()
 
@@ -26,4 +28,36 @@ def puItems(subtitle_path,media_url):
         print(f'\n=======>Total count of subtitles: {len(data_to_upload)}')
     _dbobj.createItem(data_to_upload)
     os.remove(subtitle_path)
+    # os.remove(video_path)
     print('Insert background task completed')
+    
+    
+@shared_task
+def uploads3(file_name,bucket=None,object_name=None):
+    # If S3 object_name was not specified, use file_name
+    if object_name is None:
+        ext = os.path.splitext(file_name)[-1].lower()
+
+        # Creates folder in bucket to upload files
+        if ext == '.txt':
+            object_name =  'subtitles/'+ os.path.basename(file_name)
+        else:
+            object_name = 'uploads/' + os.path.basename(file_name)
+    
+    # Bucket Name for upload
+    if bucket is None:
+        bucket = 'ecowiser-internship'
+    
+    # s3 client for uploading files
+    upload_file(file_name,bucket,object_name)
+        
+        
+@shared_task(bind=True)
+def wait_sometime(self, seconds):
+    progress_recorder = ProgressRecorder(self)
+    result = 0
+    for i in range(seconds):
+        time.sleep(5)
+        result += i
+        progress_recorder.set_progress(i + 1, seconds,f'Sleep Progress Track')
+    return result

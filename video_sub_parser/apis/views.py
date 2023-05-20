@@ -6,13 +6,15 @@ from .models import SubtitleDataModel,FileModel
 from .serializers import SubtitleDataSerializer,FileSerializer
 from rest_framework.parsers import MultiPartParser, FormParser
 from .dynamodb import DynamoServices
-#For allowing CORS
-from django.utils.decorators import method_decorator
-from django.views.decorators.csrf import csrf_exempt
-from .s3 import upload_file
+from celery.result import AsyncResult
+from .tasks import uploads3
 from django.conf import settings
 from .extractor import *
 import os
+#For allowing CORS
+from django.utils.decorators import method_decorator
+from django.views.decorators.csrf import csrf_exempt
+
 
 # Create your views here.
 @method_decorator(csrf_exempt, name='dispatch')
@@ -32,13 +34,12 @@ class VideoParse(APIView):
     
     def get(self, request,id=None):
         if id:
-            item = SubtitleDataModel.objects.get(id=id)
-            serializer = SubtitleDataSerializer(item)
-            return Response({"status": "success", "data": serializer.data}, status=status.HTTP_200_OK)
+            res = AsyncResult(id)
+            print(res.result)
+            return Response({"status": "success", "data": 'hey'}, status=status.HTTP_200_OK)
 
-        items = SubtitleDataModel.objects.all()
-        serializer = SubtitleDataSerializer(items, many=True)
-        return Response({"status": "success", "data": serializer.data}, status=status.HTTP_200_OK)
+        else:
+            return Response({"status": "error", "data":"No task ID is given"}, status=status.HTTP_400_BAD_REQUEST)
 
 
 @method_decorator(csrf_exempt, name='dispatch')
@@ -50,13 +51,15 @@ class FileView(APIView):
         file_serializer = FileSerializer(data=request.data)
         
         if file_serializer.is_valid():
+            # Saves file locally and generate the actual path
             file_serializer.save()
             save_path = os.path.join(settings.BASE_DIR, str(file_serializer.data['file']).strip("/"))
-            # print(save_path)
+
+            # Uses the path to upload the file to s3 bucket
             if os.path.isfile(save_path):
-                upload_file(save_path)
-                # os.remove(save_path)
+                uploads3.delay(save_path)
                 filename = os.path.basename(save_path)
+                
             return Response(data={"filename":filename}, status=status.HTTP_201_CREATED)
         else:
             return Response(file_serializer.errors, status=status.HTTP_400_BAD_REQUEST)
@@ -72,10 +75,12 @@ class FileParseView(APIView):
     
     def get(self,request,file=None):
         filename=self.request.query_params.get('file', None)
-        # print(filename)
+
         if filename:
             save_path = os.path.join(settings.BASE_DIR, f'media/uploads/{filename}')
-            extractSubtitle(save_path)
-            return Response(data={"message":"Parsed Video"}, status=status.HTTP_201_CREATED)
+            # task_id = extractSubtitle(save_path)
+            task_id = wait_sometime.delay(5)
+
+            return Response(data={"message":"Started parsing video", "task_id":str(task_id)}, status=status.HTTP_201_CREATED)
         else:
             return Response(data={"message":"No video found"}, status=status.HTTP_400_BAD_REQUEST)

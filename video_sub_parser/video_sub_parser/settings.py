@@ -52,6 +52,8 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'rest_framework',
     'celery',
+    'celery_progress',
+    'django_celery_results',
     'apis'
 ]
 

@@ -26,7 +26,7 @@ class ProgressPercentage(object):
             sys.stdout.flush()
 
 
-def upload_file(file_name, bucket=None, object_name=None):
+def upload_file(file_name, bucket, object_name):
     """Upload a file to an S3 bucket
 
     :param file_name: File to upload
@@ -34,25 +34,12 @@ def upload_file(file_name, bucket=None, object_name=None):
     :param object_name: S3 object name. If not specified then file_name is used
     :return: True if file was uploaded, else False
     """
-
-    # If S3 object_name was not specified, use file_name
-    if object_name is None:
-        ext = os.path.splitext(file_name)[-1].lower()
-        # print(ext)
-        if ext == '.txt':
-            object_name =  'subtitles/'+ os.path.basename(file_name)
-        else:
-            object_name = 'uploads/' + os.path.basename(file_name)
-        # print(object_name)
-        
-    if bucket is None:
-        bucket = 'ecowiser-internship'
-        # print(object_name)
-
+    
     # Upload the file
     s3_client = boto3.client('s3')
     try:
         response = s3_client.upload_file(file_name, bucket,object_name,Callback=ProgressPercentage(file_name))
+        print(response)
     except ClientError as e:
         logging.error(e)
         return False
