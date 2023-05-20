@@ -43,6 +43,6 @@ def insertItems(self,subtitle_path,media_path):
     
     # Clean up all local files
     os.remove(subtitle_path)
-    # os.remove(video_path)
+    os.remove(media_path)
     print('Background DynamoDB Insert Completed')
     

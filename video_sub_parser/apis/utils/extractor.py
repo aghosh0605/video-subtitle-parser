@@ -2,7 +2,8 @@ import subprocess
 from django.conf import settings
 import os
 import uuid
-from .tasks import insertItems
+from apis.tasks import insertItems
+from apis.tasks import uploadFile
 
 def extractSubtitle(video_path):
     # Prepare variables
@@ -17,7 +18,7 @@ def extractSubtitle(video_path):
     # print(returned_output.decode("utf-8"))
     
     if os.path.isfile(subtitle_path):
-        # task_id = uploads3.delay(subtitle_path)
+        uploadFile.delay(subtitle_path)
         task_id = insertItems.delay(subtitle_path,video_path)
         
     return task_id

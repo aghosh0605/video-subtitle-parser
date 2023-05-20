@@ -1,2 +1,2 @@
-from .task1 import wait_sometime_one
+from .uploadFile import uploads3
 from .dbInsert import insertItems

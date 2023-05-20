@@ -2,45 +2,22 @@ from django.shortcuts import render
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status
-from .models import SubtitleDataModel,FileModel
-from .serializers import SubtitleDataSerializer,FileSerializer
 from rest_framework.parsers import MultiPartParser, FormParser
 from apis.utils.dynamodb import DynamoDBServices
+from .tasks import uploads3
 from celery.result import AsyncResult
 from django.conf import settings
-from .extractor import *
+from apis.utils.extractor import *
+from apis.serializers import FileSerializer
 import os
 #For allowing CORS
 from django.utils.decorators import method_decorator
 from django.views.decorators.csrf import csrf_exempt
 
+# Initiate DynamoDB Cleint Object
 _DBObj = DynamoDBServices()
 
 # Create your views here.
-@method_decorator(csrf_exempt, name='dispatch')
-class VideoParse(APIView):
-    
-    def post(self, request):
-        serializer = SubtitleDataSerializer(data=request.data)
-        
-        if serializer.is_valid():
-            # serializer.save()
-            VideoParse._DBObj.createItem(serializer.data)
-            return Response({"status": "success", "data": serializer.data}, status=status.HTTP_200_OK)
-        else:
-            return Response({"status": "error", "data": serializer.errors}, status=status.HTTP_400_BAD_REQUEST)
-    
-    
-    def get(self, request,id=None):
-        if id:
-            res = AsyncResult(id)
-            print(res.result)
-            return Response({"status": "success", "data": 'hey'}, status=status.HTTP_200_OK)
-
-        else:
-            return Response({"status": "error", "data":"No task ID is given"}, status=status.HTTP_400_BAD_REQUEST)
-
-
 @method_decorator(csrf_exempt, name='dispatch')
 class FileView(APIView):
     parser_classes = (MultiPartParser, FormParser)
@@ -52,24 +29,16 @@ class FileView(APIView):
             # Saves file locally and generate the actual path
             file_serializer.save()
             save_path = os.path.join(settings.BASE_DIR, str(file_serializer.data['file']).strip("/"))
-
+            #print(save_path)
+            
             # Uses the path to upload the file to s3 bucket
             if os.path.isfile(save_path):
-                uploads3.delay(save_path)
+                task_id = uploads3.delay(save_path)
                 filename = os.path.basename(save_path)
-                
-            return Response(data={"filename":filename}, status=status.HTTP_201_CREATED)
+            return Response(data={"message":"Saved Locally. Uploading to s3...","filename":filename, "task_id":str(task_id)}, status=status.HTTP_201_CREATED)
+        
         else:
             return Response(file_serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-        
-    def get(self,request):
-        search_query=self.request.query_params.get('query', None)
-        if search_query:
-            result = FileView._DBObj.searchItem(search_query)
-            return Response(data=result, status=status.HTTP_201_CREATED)
-        else:
-            return Response(data={"message":"No subtitle found"}, status=status.HTTP_400_BAD_REQUEST)
-class FileParseView(APIView):
     
     def get(self,request,file=None):
         filename=self.request.query_params.get('file', None)
@@ -81,3 +50,23 @@ class FileParseView(APIView):
             return Response(data={"message":"Started Processing Video Subtitle", "task_id":str(task_id)}, status=status.HTTP_201_CREATED)
         else:
             return Response(data={"message":"No video found"}, status=status.HTTP_400_BAD_REQUEST)
+
+@method_decorator(csrf_exempt, name='dispatch')
+class QueryView(APIView):
+    
+    def get(self,request):
+        # Get Query from Request
+        search_query=self.request.query_params.get('query', None)
+        
+        if search_query:
+            result = _DBObj.searchItem(search_query)
+            return Response(data=result, status=status.HTTP_201_CREATED)
+        else:
+            return Response(data={"message":"No subtitle found"}, status=status.HTTP_400_BAD_REQUEST)
+    
+    def patch(self,request,id=None):
+        if id:
+            res = AsyncResult(id)
+            return Response(data=res.ready(), status=status.HTTP_201_CREATED)
+        else:
+            return Response(data={"message":"No task found"}, status=status.HTTP_400_BAD_REQUEST)

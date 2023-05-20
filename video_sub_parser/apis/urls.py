@@ -1,10 +1,9 @@
 from django.urls import path
-from .views import VideoParse,FileView,FileParseView
+from .views import FileView,QueryView
 
 urlpatterns = [
-    path('subtitle', VideoParse.as_view()),
-    path('subtitle/<str:id>', VideoParse.as_view()),
-    path('upload', FileView.as_view(), name='file-upload'),
-    path('parse', FileParseView.as_view()),
-    path('subtitle/find',FileView.as_view())
+    path('upload/file', FileView.as_view(), name='file-upload'),
+    path('parse', FileView.as_view()),
+    path('subtitle/find',QueryView.as_view()),
+    path('status/file/<str:id>',QueryView.as_view())
 ]
