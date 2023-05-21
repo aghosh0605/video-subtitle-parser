@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from .models import SubtitleDataModel,FileModel
+from .models import FileModel
 from django.utils import timezone
 import uuid
 

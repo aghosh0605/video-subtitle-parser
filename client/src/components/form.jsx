@@ -14,7 +14,8 @@ export const FileUpload = () => {
   const handleSubmission = () => {
     const formData = new FormData();
 
-    formData.append("File", selectedFile);
+    formData.append("file", selectedFile);
+    formData.append("remark", "File to parse");
 
     fetch(`${BASE_URL}/api/v1/upload/file`, {
       method: "POST",

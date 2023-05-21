@@ -20,4 +20,4 @@ def uploads3(self,file_name,bucket=None,object_name=None):
         bucket = 'ecowiser-internship'
     
     # s3 client for uploading files
-    upload_file(file_name,bucket,object_name)
+    # upload_file(file_name,bucket,object_name)

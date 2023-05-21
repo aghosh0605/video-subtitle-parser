@@ -37,7 +37,7 @@ def insertItems(self,subtitle_path,media_path):
     with _DBObj.table.batch_writer() as batch:
             for item in data:
                 response = batch.put_item(Item=item)
-                progress_recorder.set_progress(data.index(item)+1, data_len,f'Insert Progress')
+                # progress_recorder.set_progress(data.index(item)+1, data_len,f'Insert Progress')
     print("Uploaded all items to DynamoDB")
     
     
