@@ -6,11 +6,13 @@ billiard==3.6.4.0
 boto3==1.26.135
 botocore==1.29.135
 celery==5.2.7
+celery-progress==0.3
 click==8.1.3
 click-didyoumean==0.3.0
 click-plugins==1.1.1
 click-repl==0.2.0
 Django==4.2.1
+django-celery-results==2.5.1
 djangorestframework==3.14.0
 jmespath==1.0.1
 kombu==5.2.4
