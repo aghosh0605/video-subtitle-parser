@@ -22,6 +22,7 @@ export const FileUpload = (props) => {
   const [selectedFile, setSelectedFile] = useState();
   const [isFilePicked, setIsFilePicked] = useState(false);
   const [isFileSent, setIsFileSent] = useState(true);
+  const [data, setData] = useState({});
 
   const changeHandler = (event) => {
     setSelectedFile(event.target.files[0]);
@@ -38,20 +39,21 @@ export const FileUpload = (props) => {
       body: formData,
     });
     const result = await response.json();
-    console.log(result.filename);
+    setData(result);
+    //console.log(result.filename);
     props.setFileName(result.filename);
     console.log("Success:", result);
     setIsFileSent(false);
   };
 
-  const handleRefresh = async (name) => {
-    if (name) {
-      const res = await fetch(`${BASE_URL}/api/v1/status/file/${name},`, {
+  const handleRefresh = async (task_id) => {
+    if (task_id) {
+      const res = await fetch(`${BASE_URL}/api/v1/status/file/${task_id}`, {
         method: "PATCH",
       });
       const body = await res.json();
       console.log(body);
-      setIsFileSent(res);
+      setIsFileSent(body);
     } else {
       setIsFileSent(false);
     }
@@ -84,7 +86,7 @@ export const FileUpload = (props) => {
         </ColorButton>
 
         <IconButton color="primary" aria-label="add to shopping cart">
-          <RefreshIcon onClick={() => handleRefresh(props.fileName)} />
+          <RefreshIcon onClick={() => handleRefresh(data.task_id)} />
         </IconButton>
       </div>
     </div>
