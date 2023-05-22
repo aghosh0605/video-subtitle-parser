@@ -33,9 +33,9 @@ class FileView(APIView):
             
             # Uses the path to upload the file to s3 bucket
             if os.path.isfile(save_path):
-                task_id = uploads3.delay(save_path)
+                upload_id = uploads3.delay(save_path)
                 filename = os.path.basename(save_path)
-            return Response(data={"message":"Saved Locally. Uploading to s3...","filename":filename, "task_id":str(task_id)}, status=status.HTTP_201_CREATED)
+            return Response(data={"message":"Saved Locally. Uploading to s3...","filename":filename, "task_id":str(upload_id)}, status=status.HTTP_201_CREATED)
         
         else:
             return Response(file_serializer.errors, status=status.HTTP_400_BAD_REQUEST)
@@ -45,9 +45,9 @@ class FileView(APIView):
 
         if filename:
             save_path = os.path.join(settings.BASE_DIR, f'media/uploads/{filename}')
-            task_id = extractSubtitle(save_path)
+            parse_id = extractSubtitle(save_path)
 
-            return Response(data={"message":"Started Processing Video Subtitle", "task_id":str(task_id)}, status=status.HTTP_201_CREATED)
+            return Response(data={"message":"Started Processing Video Subtitle", "task_id":str(parse_id)}, status=status.HTTP_201_CREATED)
         else:
             return Response(data={"message":"No video found"}, status=status.HTTP_400_BAD_REQUEST)
 
@@ -59,7 +59,7 @@ class QueryView(APIView):
         search_query=self.request.query_params.get('query', None)
         
         if search_query:
-            result = _DBObj.searchItem(search_query)
+            result = _DBObj.searchItem(search_query.upper())
             return Response(data=result, status=status.HTTP_201_CREATED)
         else:
             return Response(data={"message":"No subtitle found"}, status=status.HTTP_400_BAD_REQUEST)

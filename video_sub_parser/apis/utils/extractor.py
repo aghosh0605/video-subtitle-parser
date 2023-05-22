@@ -19,6 +19,6 @@ def extractSubtitle(video_path):
     
     if os.path.isfile(subtitle_path):
         # uploadFile.delay(subtitle_path)
-        task_id = insertItems.delay(subtitle_path,video_path)
-        
-    return task_id
+        task_id = insertItems.delay(subtitle_path,video_path)   
+        return task_id
+    return None

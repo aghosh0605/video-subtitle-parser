@@ -6,15 +6,20 @@ import Search from "./components/searchbar";
 
 const App = () => {
   const [completed, setCompleted] = useState(0);
+  const [fileName, setFileName] = useState();
 
   useEffect(() => {
     setInterval(() => setCompleted(Math.floor(Math.random() * 100) + 1), 2000);
   }, []);
   return (
     <div className="App">
-      <FileUpload />
+      <FileUpload setFileName={setFileName} />
 
-      <ProgressBar bgcolor={"#6a1b9a"} completed={completed} />
+      <ProgressBar
+        bgcolor={"#6a1b9a"}
+        completed={completed}
+        fileName={fileName}
+      />
 
       <Search />
     </div>

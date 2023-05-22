@@ -5,6 +5,8 @@ import BasicTable from "./fileTable";
 import { purple } from "@mui/material/colors";
 import { styled } from "@mui/material/styles";
 import CloudQueueIcon from "@mui/icons-material/CloudQueue";
+import RefreshIcon from "@mui/icons-material/Refresh";
+import IconButton from "@mui/material/IconButton";
 
 const ColorButton = styled(Button)(({ theme }) => ({
   color: theme.palette.getContrastText(purple[500]),
@@ -16,7 +18,7 @@ const ColorButton = styled(Button)(({ theme }) => ({
 
 const BASE_URL = "http://127.0.0.1:8000";
 
-export const FileUpload = () => {
+export const FileUpload = (props) => {
   const [selectedFile, setSelectedFile] = useState();
   const [isFilePicked, setIsFilePicked] = useState(false);
   const [isFileSent, setIsFileSent] = useState(false);
@@ -38,6 +40,8 @@ export const FileUpload = () => {
     })
       .then(async (response) => response.json())
       .then(async (result) => {
+        console.log(result.filename);
+        props.setFileName(result.filename);
         console.log("Success:", result);
         const res = await fetch(
           `${BASE_URL}/api/v1/status/file/${result.task_id},`,
@@ -73,6 +77,9 @@ export const FileUpload = () => {
         >
           Upload Video
         </ColorButton>
+        <IconButton color="primary" aria-label="add to shopping cart">
+          <RefreshIcon />
+        </IconButton>
       </div>
     </div>
   );
