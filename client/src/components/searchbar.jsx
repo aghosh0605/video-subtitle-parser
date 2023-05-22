@@ -1,4 +1,7 @@
 import React, { useState } from "react";
+import IconButton from "@mui/material/IconButton";
+import SearchIcon from "@mui/icons-material/Search";
+import SubtitleTables from "./subtitleResult";
 
 const BASE_URL = "http://127.0.0.1:8000";
 
@@ -20,7 +23,6 @@ const Search = ({ details }) => {
       }
       let actualData = await response.json();
       setData(actualData.Items);
-      console.log(actualData.Items);
       setError(null);
     } catch (err) {
       setError(err.message);
@@ -32,7 +34,6 @@ const Search = ({ details }) => {
 
   const handleChange = (e) => {
     setSearchField(e.target.value);
-    // getData();
   };
 
   const handleForm = (event) => {
@@ -42,31 +43,31 @@ const Search = ({ details }) => {
 
   return (
     <div>
-      <form onSubmit={handleForm}>
+      <br />
+      <form className="flex items-center border border-gray-300 rounded-md px-2 py-1">
         <input
-          className="pa3 bb br3 grow b--none bg-lightest-blue ma3"
+          className="border border-gray-300 rounded-l-md px-4 py-2 w-full focus:outline-none focus:ring-2 focus:ring-blue-500 placeholder-gray-400"
           type="search"
-          placeholder="Search People"
+          placeholder="Search Subtitles"
           onChange={handleChange}
         />
-        <button type="submit">Search </button>
+        <IconButton color="primary" aria-label="add to shopping cart">
+          <SearchIcon onClick={handleForm} />
+        </IconButton>
       </form>
-      <h1>API Posts</h1>
-      {loading && <div>A moment please...</div>}
+      <br />
+      <h3 className="text-2xl font-medium text-red-500 font-mono">
+        Subtitle Results
+      </h3>
+      {loading && (
+        <div className="text-base font-bold text-purple-600">
+          A moment please...
+        </div>
+      )}
       {error && (
         <div>{`There is a problem fetching the post data - ${error}`}</div>
       )}
-      <ul>
-        {data &&
-          data.map((item, index) => (
-            <li
-              key={index}
-              style={{ textAlign: "left", fontSize: "12px", fontWeight: "400" }}
-            >
-              <h3>{item.subtitle_url}</h3>
-            </li>
-          ))}
-      </ul>
+      <ul>{data && <SubtitleTables rows={data} />}</ul>
     </div>
   );
 };

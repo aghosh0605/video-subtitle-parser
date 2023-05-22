@@ -1,6 +1,18 @@
 import React, { useState } from "react";
 import CircularIndeterminate from "./uploading";
 import Button from "@mui/material/Button";
+import BasicTable from "./fileTable";
+import { purple } from "@mui/material/colors";
+import { styled } from "@mui/material/styles";
+import CloudQueueIcon from "@mui/icons-material/CloudQueue";
+
+const ColorButton = styled(Button)(({ theme }) => ({
+  color: theme.palette.getContrastText(purple[500]),
+  backgroundColor: "#4caf50",
+  "&:hover": {
+    backgroundColor: "#357a38",
+  },
+}));
 
 const BASE_URL = "http://127.0.0.1:8000";
 
@@ -47,23 +59,20 @@ export const FileUpload = () => {
         onChange={changeHandler}
       />
       {isFilePicked ? (
-        <div>
-          <p>Filename: {selectedFile.name}</p>
-          <p>Filetype: {selectedFile.type}</p>
-          <p>Size in bytes: {selectedFile.size}</p>
-          <p>
-            lastModifiedDate:{" "}
-            {selectedFile.lastModifiedDate.toLocaleDateString()}
-          </p>
-        </div>
+        <BasicTable rows={[selectedFile]} />
       ) : (
         <p>Select a file to show details</p>
       )}
+      <br />
       <div>
-        <Button variant="contained" onClick={handleSubmission}>
-          Upload File
-        </Button>
         {isFileSent && <CircularIndeterminate />}
+        <ColorButton
+          variant="contained"
+          onClick={handleSubmission}
+          endIcon={<CloudQueueIcon />}
+        >
+          Upload Video
+        </ColorButton>
       </div>
     </div>
   );
