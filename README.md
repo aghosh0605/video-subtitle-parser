@@ -25,26 +25,136 @@ For instance, if a 2 minute clip of a music video was uploaded, the application 
 `sudo apt-get install ccextractor` - Tested on ubuntu 20.04 LTS
 
 ```python
-python3 manage.py makemigrations
-python3 manage.py migrate
-python3 manage.py runserver
-```
-
-## Endpoints
-
-### REST API Endpoints
-
-```
-POST /api/v1/subtitle               Add a subtitle
-GET /api/v1/subtitle                Shows all subtitle details
-GET /api/v1/subtitle/item_id        Shows subtitle details with ID
+python3 manage.py makemigrations #Need if you use SQL DB
+python3 manage.py migrate  #Need if you use SQL DB
+python3 manage.py runserver #TO start the server
 ```
 
 ## Useful command snippet for Developers
 
 ```bash
-ccextractor video_test.mp4 -out=ttxt
-pip3 freeze > requirements.txt
-celery -A video_sub_parser worker --loglevel=debug --concurrency=4
-source env/bin/activate
+source env/bin/activate #Enable python virtual environment
+pip3 freeze > requirements.txt #To install the python3 packages
+ccextractor video_test.mp4 -out=ttxt #To extract subtitles from the video
+sudo systemctl start redis-server.service # To start the redis service
+celery -A video_sub_parser worker --loglevel=debug --concurrency=4  #To start celery instance
+```
+
+## API Endpoints
+
+### Request
+
+`POST /api/v1/upload/file`
+
+| Body     | Type          | Description                   |
+| :------- | :------------ | :---------------------------- |
+| `file`   | `File Object` | **Required**. File to Upload  |
+| `remark` | `string`      | **Required**. Remark for File |
+
+### Response
+
+```JSON
+{
+    "message":string,
+    "filename":string,
+    "task_id":string
+}
+```
+
+### Request
+
+`GET /api/v1/parse?file=filename`
+
+| Body       | Type     | Description                         |
+| :--------- | :------- | :---------------------------------- |
+| `filename` | `string` | **Required**. Name of Uploaded File |
+
+### Response
+
+```JSON
+{
+    "message":string
+}
+```
+
+### Request
+
+`GET /api/v1/subtitle/find?query=TO SUCCESS`
+
+| Body    | Type     | Description                   |
+| :------ | :------- | :---------------------------- |
+| `query` | `string` | **Required**. Query to search |
+
+### Response
+
+```JSON
+{
+    {
+    "Items": [
+        {
+            "subtitle_url": string,
+            "media_path": string,
+            "SubtitleID": string,
+            "subtitle": string,
+            "start_time": string,
+            "end_time": string
+        }
+    ],
+    "Count": number,
+    "ScannedCount": number,
+    "ResponseMetadata": {
+        "RequestId": string,
+        "HTTPStatusCode": number,
+        "HTTPHeaders": {
+            "server": string,
+            "date": string,
+            "content-type": string,
+            "content-length": string,
+            "connection": string,
+            "x-amzn-requestid": string,
+            "x-amz-crc32": string
+        },
+        "RetryAttempts": number
+    }
+}
+}
+```
+
+### Request
+
+`PATCH /api/v1/status/file/task_id`
+
+| Body      | Type     | Description                                  |
+| :-------- | :------- | :------------------------------------------- |
+| `task_id` | `string` | **Required**. Background Task ID from Celery |
+
+### Response
+
+```
+boolean
+```
+
+### Request
+
+`GET /progress-track/task_id`
+
+| Body      | Type     | Description                                  |
+| :-------- | :------- | :------------------------------------------- |
+| `task_id` | `string` | **Required**. Background Task ID from Celery |
+
+### Response
+
+```JSON
+   {
+    "state": string,
+    "complete": boolean,
+    "success": boolean,
+    "progress": {
+        "pending": boolean,
+        "current": number,
+        "total": number,
+        "percent": number
+    },
+    "result": string | null
+}
 ```
