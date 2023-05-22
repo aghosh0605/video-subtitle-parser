@@ -1,6 +1,7 @@
 import boto3
 import datetime
 from boto3.dynamodb.conditions import Key, Attr
+from botocore.config import Config
 
 # value = os.getenv('AWS_ACCESS_KEY_ID')
 # print(value)
@@ -11,11 +12,18 @@ class DynamoDBServices:
     __dynamodb = None
     table = None
     _instance = None
+    
+    __config = Config(
+   retries = {
+      'max_attempts': 10,
+      'mode': 'standard'
+   }
+)
 
     def __new__(cls):
         if cls._instance is None:
             print('Creating the object')
-            DynamoDBServices.__dynamodb = boto3.resource('dynamodb')
+            DynamoDBServices.__dynamodb = boto3.resource('dynamodb',config=DynamoDBServices.__config)
             DynamoDBServices.table = DynamoDBServices.__dynamodb.Table('ecowiser')
             print(f"Connected DynamoDB At: {datetime.datetime.now()}")
             cls._instance = super(DynamoDBServices, cls).__new__(cls)

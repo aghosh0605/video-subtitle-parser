@@ -13,7 +13,7 @@ const App = () => {
   }, []);
   return (
     <div className="App">
-      <FileUpload setFileName={setFileName} />
+      <FileUpload fileName={fileName} setFileName={setFileName} />
 
       <ProgressBar
         bgcolor={"#6a1b9a"}

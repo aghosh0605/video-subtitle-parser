@@ -21,7 +21,7 @@ const BASE_URL = "http://127.0.0.1:8000";
 export const FileUpload = (props) => {
   const [selectedFile, setSelectedFile] = useState();
   const [isFilePicked, setIsFilePicked] = useState(false);
-  const [isFileSent, setIsFileSent] = useState(false);
+  const [isFileSent, setIsFileSent] = useState(true);
 
   const changeHandler = (event) => {
     setSelectedFile(event.target.files[0]);
@@ -33,25 +33,28 @@ export const FileUpload = (props) => {
 
     formData.append("file", selectedFile);
     formData.append("remark", "File to parse");
-
-    await fetch(`${BASE_URL}/api/v1/upload/file`, {
+    const response = await fetch(`${BASE_URL}/api/v1/upload/file`, {
       method: "POST",
       body: formData,
-    })
-      .then(async (response) => response.json())
-      .then(async (result) => {
-        console.log(result.filename);
-        props.setFileName(result.filename);
-        console.log("Success:", result);
-        const res = await fetch(
-          `${BASE_URL}/api/v1/status/file/${result.task_id},`,
-          { method: "PATCH" }
-        );
-        setIsFileSent(res);
-      })
-      .catch((error) => {
-        console.error("Error:", error);
+    });
+    const result = await response.json();
+    console.log(result.filename);
+    props.setFileName(result.filename);
+    console.log("Success:", result);
+    setIsFileSent(false);
+  };
+
+  const handleRefresh = async (name) => {
+    if (name) {
+      const res = await fetch(`${BASE_URL}/api/v1/status/file/${name},`, {
+        method: "PATCH",
       });
+      const body = await res.json();
+      console.log(body);
+      setIsFileSent(res);
+    } else {
+      setIsFileSent(false);
+    }
   };
 
   return (
@@ -65,11 +68,13 @@ export const FileUpload = (props) => {
       {isFilePicked ? (
         <BasicTable rows={[selectedFile]} />
       ) : (
-        <p>Select a file to show details</p>
+        <p className="text-base font-bold text-purple-600">
+          Select a file to show details
+        </p>
       )}
       <br />
       <div>
-        {isFileSent && <CircularIndeterminate />}
+        {!isFileSent && <CircularIndeterminate />}
         <ColorButton
           variant="contained"
           onClick={handleSubmission}
@@ -77,8 +82,9 @@ export const FileUpload = (props) => {
         >
           Upload Video
         </ColorButton>
+
         <IconButton color="primary" aria-label="add to shopping cart">
-          <RefreshIcon />
+          <RefreshIcon onClick={() => handleRefresh(props.fileName)} />
         </IconButton>
       </div>
     </div>

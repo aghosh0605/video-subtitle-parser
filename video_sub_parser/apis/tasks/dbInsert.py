@@ -36,13 +36,13 @@ def insertItems(self,subtitle_path,media_path):
         #For multiple items use below
     with _DBObj.table.batch_writer() as batch:
             for item in data:
-                # response = batch.put_item(Item=item)
+                response = batch.put_item(Item=item)
                 progress_recorder.set_progress(data.index(item)+1, data_len,f'Insert Progress')
     print("Uploaded all items to DynamoDB")
     
     
     # Clean up all local files
-    # os.remove(subtitle_path)
-    # os.remove(media_path)
+    os.remove(subtitle_path)
+    os.remove(media_path)
     print('Background DynamoDB Insert Completed')
     
