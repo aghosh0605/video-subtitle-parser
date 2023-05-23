@@ -9,7 +9,8 @@ import Button from "@mui/material/Button";
 import IconButton from "@mui/material/IconButton";
 import { toast } from "react-toastify";
 
-const BASE_URL = "http://127.0.0.1:7000";
+const BASE_URL = "https://api.cybersupport.in";
+
 function LinearProgressWithLabel(props) {
   return (
     <Box sx={{ display: "flex", alignItems: "center" }}>

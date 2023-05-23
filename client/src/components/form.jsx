@@ -17,7 +17,7 @@ const ColorButton = styled(Button)(({ theme }) => ({
   },
 }));
 
-const BASE_URL = "http://127.0.0.1:7000";
+const BASE_URL = "https://api.cybersupport.in";
 
 export const FileUpload = (props) => {
   const [selectedFile, setSelectedFile] = useState();
