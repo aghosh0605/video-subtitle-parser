@@ -30,6 +30,12 @@ python3 manage.py migrate  #Need if you use SQL DB
 python3 manage.py runserver #TO start the server
 ```
 
+**For Nginx Reverse Proxy increase the upload file size and get rid of CORS errors, follow the below method**
+
+1. Open `/etc/nginx/nginx.conf` and modify the below parameter within **http**
+2. `client_max_body_size SIZE;` **SIZE** Refers to max body size
+3. `sudo systemctl restart nginx` To restart nginx server
+
 ## Useful command snippet for Developers
 
 ```bash
