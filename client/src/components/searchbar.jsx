@@ -4,7 +4,7 @@ import SearchIcon from "@mui/icons-material/Search";
 import SubtitleTables from "./subtitleResult";
 import { toast } from "react-toastify";
 
-const BASE_URL = "http://127.0.0.1:8000";
+const BASE_URL = "http://127.0.0.1:7000";
 
 const Search = ({ details }) => {
   const [searchField, setSearchField] = useState("");
