@@ -3,6 +3,8 @@ import { FileUpload } from "./components/form";
 import ProgressBar from "./components/progressbar";
 import { useState, useEffect } from "react";
 import Search from "./components/searchbar";
+import { ToastContainer } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
 const App = () => {
   const [completed, setCompleted] = useState(0);
@@ -13,6 +15,18 @@ const App = () => {
   }, []);
   return (
     <div className="App">
+      <ToastContainer
+        position="top-center"
+        autoClose={5000}
+        hideProgressBar={false}
+        newestOnTop
+        closeOnClick
+        rtl={false}
+        pauseOnFocusLoss
+        draggable
+        pauseOnHover
+        theme="dark"
+      />
       <FileUpload fileName={fileName} setFileName={setFileName} />
 
       <ProgressBar

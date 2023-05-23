@@ -34,6 +34,7 @@ python3 manage.py runserver #TO start the server
 
 ```bash
 source env/bin/activate #Enable python virtual environment
+sudo apt install ccextractor #To install ccextractor binaries
 pip3 freeze > requirements.txt #To install the python3 packages
 ccextractor video_test.mp4 -out=ttxt #To extract subtitles from the video
 sudo systemctl start redis-server.service # To start the redis service

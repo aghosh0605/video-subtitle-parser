@@ -7,6 +7,7 @@ import { styled } from "@mui/material/styles";
 import CloudQueueIcon from "@mui/icons-material/CloudQueue";
 import RefreshIcon from "@mui/icons-material/Refresh";
 import IconButton from "@mui/material/IconButton";
+import { toast } from "react-toastify";
 
 const ColorButton = styled(Button)(({ theme }) => ({
   color: theme.palette.getContrastText(purple[500]),
@@ -23,31 +24,62 @@ export const FileUpload = (props) => {
   const [isFilePicked, setIsFilePicked] = useState(false);
   const [isFileSent, setIsFileSent] = useState(true);
   const [data, setData] = useState({});
+  const [error, setError] = useState(null);
 
   const changeHandler = (event) => {
     setSelectedFile(event.target.files[0]);
     setIsFilePicked(true);
   };
-
   const handleSubmission = async () => {
-    const formData = new FormData();
+    try {
+      const formData = new FormData();
 
-    formData.append("file", selectedFile);
-    formData.append("remark", "File to parse");
-    const response = await fetch(`${BASE_URL}/api/v1/upload/file`, {
-      method: "POST",
-      body: formData,
-    });
-    const result = await response.json();
-    setData(result);
-    //console.log(result.filename);
-    props.setFileName(result.filename);
-    console.log("Success:", result);
-    setIsFileSent(false);
+      formData.append("file", selectedFile);
+      formData.append("remark", "File to parse");
+      const response = await fetch(`${BASE_URL}/api/v1/upload/file`, {
+        method: "POST",
+        body: formData,
+      });
+      const result = await response.json();
+      if (!response.ok) {
+        throw new Error(
+          `This is an HTTP error: The status is ${result.file[0]}`
+        );
+      }
+      setData(result);
+      //console.log(result.filename);
+      props.setFileName(result.filename);
+      //console.log(result.file[0]);
+      setIsFileSent(false);
+      toast(result.message, {
+        position: "top-center",
+        autoClose: 5000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+        theme: "dark",
+      });
+      setError(null);
+    } catch (err) {
+      toast(err.message, {
+        position: "top-center",
+        autoClose: 5000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+        theme: "dark",
+      });
+      setError(err.message);
+    }
   };
 
   const handleRefresh = async (task_id) => {
     if (task_id) {
+      console.log(task_id);
       const res = await fetch(`${BASE_URL}/api/v1/status/file/${task_id}`, {
         method: "PATCH",
       });
@@ -79,15 +111,16 @@ export const FileUpload = (props) => {
         {!isFileSent && <CircularIndeterminate />}
         <ColorButton
           variant="contained"
-          onClick={handleSubmission}
+          onClick={() => handleSubmission()}
           endIcon={<CloudQueueIcon />}
         >
           Upload Video
         </ColorButton>
 
         <IconButton color="primary" aria-label="add to shopping cart">
-          <RefreshIcon onClick={() => handleRefresh(data.task_id)} />
+          {data && <RefreshIcon onClick={() => handleRefresh(data.task_id)} />}
         </IconButton>
+        {error && <div>{`There is a problem fetching data - ${error}`}</div>}
       </div>
     </div>
   );

@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import IconButton from "@mui/material/IconButton";
 import SearchIcon from "@mui/icons-material/Search";
 import SubtitleTables from "./subtitleResult";
+import { toast } from "react-toastify";
 
 const BASE_URL = "http://127.0.0.1:8000";
 
@@ -13,6 +14,18 @@ const Search = ({ details }) => {
 
   const getData = async () => {
     try {
+      if (!searchField) {
+        toast("Please Provide a query to search", {
+          position: "top-center",
+          autoClose: 5000,
+          hideProgressBar: false,
+          closeOnClick: true,
+          pauseOnHover: true,
+          draggable: true,
+          progress: undefined,
+          theme: "dark",
+        });
+      }
       const response = await fetch(
         `${BASE_URL}/api/v1/subtitle/find?query=${searchField}`
       );
@@ -25,6 +38,16 @@ const Search = ({ details }) => {
       setData(actualData.Items);
       setError(null);
     } catch (err) {
+      toast(err, {
+        position: "top-center",
+        autoClose: 5000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+        theme: "dark",
+      });
       setError(err.message);
       setData(null);
     } finally {

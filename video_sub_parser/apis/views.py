@@ -35,7 +35,7 @@ class FileView(APIView):
             if os.path.isfile(save_path):
                 upload_id = uploads3.delay(save_path)
                 filename = os.path.basename(save_path)
-            return Response(data={"message":"Saved Locally. Uploading to s3...","filename":filename, "task_id":str(upload_id)}, status=status.HTTP_201_CREATED)
+            return Response(data={"message":"Uploading the Video. Please wait ....","filename":filename, "task_id":str(upload_id)}, status=status.HTTP_201_CREATED)
         
         else:
             return Response(file_serializer.errors, status=status.HTTP_400_BAD_REQUEST)
@@ -49,7 +49,7 @@ class FileView(APIView):
 
             return Response(data={"message":"Started Processing Video Subtitle", "task_id":str(parse_id)}, status=status.HTTP_201_CREATED)
         else:
-            return Response(data={"message":"No video found"}, status=status.HTTP_400_BAD_REQUEST)
+            return Response(data={"message":"Please provide the video file name"}, status=status.HTTP_400_BAD_REQUEST)
 
 @method_decorator(csrf_exempt, name='dispatch')
 class QueryView(APIView):
