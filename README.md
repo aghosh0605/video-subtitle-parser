@@ -35,11 +35,17 @@ python3 manage.py runserver #TO start the server
 ```bash
 source env/bin/activate #Enable python virtual environment
 sudo apt install ccextractor #To install ccextractor binaries
+pip install -r /path/to/requirements.txt #Install python requirements packages
 pip3 freeze > requirements.txt #To install the python3 packages
 ccextractor video_test.mp4 -out=ttxt #To extract subtitles from the video
 sudo systemctl start redis-server.service # To start the redis service
 celery -A video_sub_parser worker --loglevel=debug --concurrency=4  #To start celery instance
 ```
+
+## Important Links
+
+How to setup the Django Project in python virtual environment https://realpython.com/django-setup/
+Install Redis Server on Ubuntu https://redis.io/docs/getting-started/installation/install-redis-on-linux/
 
 ## API Endpoints
 
