@@ -16,7 +16,8 @@ For instance, if a 2 minute clip of a music video was uploaded, the application 
 
 ## How to start
 
-- Demo video [![Watch the video](https://ecowiser-internship.s3.ap-south-1.amazonaws.com/django.jpg)](https://ecowiser-internship.s3.ap-south-1.amazonaws.com/ecowiser_task.mp4)
+### Demo video [![Watch the video](https://ecowiser-internship.s3.ap-south-1.amazonaws.com/vector-video-player-941434_1920.png)](https://ecowiser-internship.s3.ap-south-1.amazonaws.com/ecowiser_task.mp4)
+
 - Clone the repo with `git clone https://github.com/aghosh0605/video-subtitle-process.git`
 - cd into the folder `cd video-subtitle-process`
 - Install the python dependencies `pip install -r requirements.txt` or `python3 -m pip install -r requirements.txt`
