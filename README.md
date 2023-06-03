@@ -52,8 +52,8 @@ celery -A video_sub_parser worker --loglevel=debug --concurrency=4  #To start ce
 
 ## Important Links
 
-How to setup the Django Project in python virtual environment https://realpython.com/django-setup/
-Install Redis Server on Ubuntu https://redis.io/docs/getting-started/installation/install-redis-on-linux/
+- How to setup the Django Project in python virtual environment https://realpython.com/django-setup/
+- Install Redis Server on Ubuntu https://redis.io/docs/getting-started/installation/install-redis-on-linux/
 
 ## API Endpoints
 
