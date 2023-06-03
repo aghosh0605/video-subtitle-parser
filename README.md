@@ -4,7 +4,7 @@ A website on which video(s) can be uploaded, processed in some manner (in the ba
 
 For instance, if a 2 minute clip of a music video was uploaded, the application will parse it, apply subtitles to it and ensure that searching for a particular word or phrase returns the time segment within which the video has those phrases being mentioned.
 
-1. Used the ccextractor binary for extracting subtitles from video. Note that using any API, etc for subtitle extraction is not allowed.
+1. Used the **ccextractor** binary for extracting subtitles from video. Note that using any API, etc for subtitle extraction is not allowed.
 
 2. Further, after processing, the videos will be stored in **S3** and the search keywords (subtitles) in **DynamoDB**.
 
